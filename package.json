@@ -39,6 +39,7 @@
     "ghooks": "^2.0.0",
     "json2yaml": "^1.1.0",
     "jsonexport": "^2.0.11",
+    "nearest-color": "^0.4.0",
     "semantic-release": "^6.3.6"
   },
   "czConfig": {
