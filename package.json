@@ -13,7 +13,8 @@
     "build-json": "node node_modules/.bin/csvtojson dist/colornames.csv >> dist/colornames.json",
     "build-yml": "node node_modules/.bin/json2yaml dist/colornames.json >> dist/colornames.yaml",
     "build": "npm run clean-dist-folder && npm run copy-csv && npm run build-json && npm run build-yml && npm run count-colors",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
