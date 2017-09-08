@@ -15,37 +15,45 @@ colors.forEach(c => {
 const nc = NC.from(colorsObj);
 
 http.createServer((req, res) => {
-  const isAPI = req.url.indexOf(baseUrl) !== -1;
-  let colorQuery = req.url.toLowerCase();
-  colorQuery = colorQuery.split(baseUrl)[1];
-  const isValidColor = /(^[0-9A-F]{6}$)|(^[0-9A-F]{3}$)/i.test(colorQuery);
-
-  let color = {
-    query: colorQuery,
-    name: null,
-    hex: null,
-    rgb: null,
-    isExact: false,
-  };
-
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  res.writeHead(200, {"Content-Type": "application/json"});
-
-  if(isValidColor && isAPI) {
-    let closestColor = nc('#' + colorQuery);
-    color.name = closestColor.name;
-    color.hex = closestColor.value;
-    color.rgb = closestColor.rgb;
-    color.isExact = closestColor.value.substr(1) === colorQuery;
-    res.write(JSON.stringify(color));
-    res.end();
-    console.log(`Color ${color.name} requested`);
+  if (req.method === 'OPTIONS') {
+      console.log('!OPTIONS');
+      var headers = {};
+      headers["Access-Control-Allow-Origin"] = "*";
+      headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+      headers["Access-Control-Allow-Credentials"] = false;
+      headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+      headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
+      res.writeHead(200, headers);
+      res.end();
   } else {
-    res.write(JSON.stringify({error: `${req.url} is not a valid color.`}));
-    res.end();
+    const isAPI = req.url.indexOf(baseUrl) !== -1;
+    let colorQuery = req.url.toLowerCase();
+    colorQuery = colorQuery.split(baseUrl)[1];
+    const isValidColor = /(^[0-9A-F]{6}$)|(^[0-9A-F]{3}$)/i.test(colorQuery);
+
+    let color = {
+      query: colorQuery,
+      name: null,
+      hex: null,
+      rgb: null,
+      isExact: false,
+    };
+
+    res.writeHead(200, {"Content-Type": "application/json"});
+
+    if(isValidColor && isAPI) {
+      let closestColor = nc('#' + colorQuery);
+      color.name = closestColor.name;
+      color.hex = closestColor.value;
+      color.rgb = closestColor.rgb;
+      color.isExact = closestColor.value.substr(1) === colorQuery;
+      res.write(JSON.stringify(color));
+      res.end();
+      console.log(`Color ${color.name} requested`);
+    } else {
+      res.write(JSON.stringify({error: `${req.url} is not a valid color.`}));
+      res.end();
+    }
   }
 }).listen(port, '0.0.0.0');
 
