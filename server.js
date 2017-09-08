@@ -28,6 +28,10 @@ http.createServer((req, res) => {
     isExact: false,
   };
 
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   res.writeHead(200, {"Content-Type": "application/json"});
 
   if(isValidColor && isAPI) {
@@ -40,7 +44,8 @@ http.createServer((req, res) => {
     res.end();
     console.log(`Color ${color.name} requested`);
   } else {
-    res.write(JSON.stringify({error: `${req.url} is not a valid color.`}))
+    res.write(JSON.stringify({error: `${req.url} is not a valid color.`}));
+    res.end();
   }
 }).listen(port, '0.0.0.0');
 
