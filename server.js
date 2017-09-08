@@ -1,7 +1,7 @@
 const http   = require('http')
   , url    = require('url')
   , fs     = require('fs')
-  , NC     = require('nearest-color')
+  , NC     = require('node_modules/nearest-color/nearestColor')
   , colors = JSON.parse(fs.readFileSync('./dist/colornames.json', 'utf8'))
   , port = process.env.PORT || 8080
   , baseUrl = 'v1/';
