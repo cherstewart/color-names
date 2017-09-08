@@ -2,7 +2,9 @@ const http   = require('http')
   , url    = require('url')
   , fs     = require('fs')
   , NC     = require('nearest-color')
-  , colors = JSON.parse(fs.readFileSync('./dist/colornames.json', 'utf8'));
+  , colors = JSON.parse(fs.readFileSync('./dist/colornames.json', 'utf8'))
+  , port = process.env.PORT || 8080
+  , baseUrl = 'v1/';
 
 let colorsObj = {};
 
@@ -13,10 +15,13 @@ colors.forEach(c => {
 const nc = NC.from(colorsObj);
 
 http.createServer((req, res) => {
-  const colorQuery = req.url.substr(1).toLowerCase();
+  const isAPI = req.url.indexOf(baseUrl) !== -1;
+  let colorQuery = req.url.toLowerCase();
+  colorQuery = colorQuery.split(baseUrl)[1];
   const isValidColor = /(^[0-9A-F]{6}$)|(^[0-9A-F]{3}$)/i.test(colorQuery);
+
   let color = {
-    query: req.url.substr(1),
+    query: colorQuery,
     name: null,
     hex: null,
     rgb: null,
@@ -25,7 +30,7 @@ http.createServer((req, res) => {
 
   res.writeHead(200, {"Content-Type": "application/json"});
 
-  if(isValidColor) {
+  if(isValidColor && isAPI) {
     let closestColor = nc('#' + colorQuery);
     color.name = closestColor.name;
     color.hex = closestColor.value;
@@ -33,9 +38,10 @@ http.createServer((req, res) => {
     color.isExact = closestColor.value.substr(1) === colorQuery;
     res.write(JSON.stringify(color));
     res.end();
+    console.log(`Color ${color.name} requested`);
   } else {
-    res.write(JSON.stringify({error: `${req.url.substr(1)} is not a valid color.`}))
+    res.write(JSON.stringify({error: `${req.url} is not a valid color.`}))
   }
-}).listen(8080,'0.0.0.0');
+}).listen(port, '0.0.0.0');
 
-console.log('Server running.');
+console.log(`Server running and listening on port ${port}`);
