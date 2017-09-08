@@ -51,5 +51,8 @@
       "pre-commit": "npm run test && npm run build"
     }
   },
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+    "node": "8.4.0"
+  }
 }
